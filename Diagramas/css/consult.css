@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.query-box {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 20px;
+    width: 45%;
+    min-width: 300px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+.query-box h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+}
+.query-box p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+}
+.query-box code {
+    display: block;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-top: 15px;
+    color: #d9534f;
+    white-space: pre-wrap;
+}
+.relation {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+.relation ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+.relation li {
+    margin-bottom: 5px;
+}

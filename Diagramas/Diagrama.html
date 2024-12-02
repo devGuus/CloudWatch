@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Arquitetura</title>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+</head>
+<body>
+    <div class="mermaid">
+        graph TD
+            ESP8266 --> AWS_IoT_Core
+            AWS_IoT_Core --> AWS_Lambda
+            AWS_Lambda --> AWS_EC2
+            AWS_Lambda --> AWS_RDS
+            AWS_Lambda --> AWS_S3
+
+            classDef aws fill:#00A8E8,stroke:#fff,stroke-width:2px;
+            class ESP8266,AWS_IoT_Core,AWS_Lambda,AWS_EC2,AWS_RDS,AWS_S3 aws;
+    </div>
+</body>
+</html>

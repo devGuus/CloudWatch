@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/consult.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Consultas SQL</title>
+</head>
+<body>
+    <h1>Diagrama de Consultas SQL</h1>
+    <div class="container">
+
+        <!-- Consulta 1 -->
+        <div class="query-box">
+            <h2>Consulta 1: Listar dispositivos e responsáveis</h2>
+            <p>Consulta para listar todos os dispositivos (freezers ou geladeiras) com seus respectivos responsáveis.</p>
+            <code>
+                SELECT devices.id AS device_id, 
+                       devices.name AS device_name, 
+                       devices.location AS device_location, 
+                       users.name AS user_name
+                FROM devices
+                INNER JOIN users ON devices.user_id = users.id;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>devices.user_id → users.id</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 2 -->
+        <div class="query-box">
+            <h2>Consulta 2: Últimas leituras de temperatura</h2>
+            <p>Exibe o dispositivo e a última temperatura registrada com o horário da leitura.</p>
+            <code>
+                SELECT devices.name AS device_name, 
+                       MAX(temperature_readings.recorded_at) AS last_recorded_at, 
+                       temperature_readings.temperature
+                FROM temperature_readings
+                INNER JOIN devices ON temperature_readings.device_id = devices.id
+                GROUP BY devices.name, temperature_readings.temperature;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>temperature_readings.device_id → devices.id</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 3 -->
+        <div class="query-box">
+            <h2>Consulta 3: Alertas críticos de temperatura</h2>
+            <p>Exibe dispositivos que dispararam alertas de temperatura com o valor limite e o momento do alerta.</p>
+            <code>
+                SELECT devices.name AS device_name, 
+                       alerts.alert_type, 
+                       alerts.threshold_value, 
+                       alerts.triggered_at
+                FROM alerts
+                INNER JOIN devices ON alerts.device_id = devices.id
+                WHERE alerts.alert_type = 'temperature';
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>alerts.device_id → devices.id</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 4 -->
+        <div class="query-box">
+            <h2>Consulta 4: Eventos de abertura e fechamento de portas</h2>
+            <p>Conta e exibe os eventos de abertura e fechamento das portas para cada dispositivo em um período específico.</p>
+            <code>
+                SELECT devices.name AS device_name, 
+                       door_events.event_type, 
+                       COUNT(door_events.event_type) AS event_count, 
+                       MIN(door_events.event_time) AS first_event, 
+                       MAX(door_events.event_time) AS last_event
+                FROM door_events
+                INNER JOIN devices ON door_events.device_id = devices.id
+                WHERE door_events.event_time BETWEEN '2023-11-01' AND '2023-11-30'
+                GROUP BY devices.name, door_events.event_type;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>door_events.device_id → devices.id</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 5 -->
+        <div class="query-box">
+            <h2>Consulta 5: Logs de manutenção realizados</h2>
+            <p>Mostra as manutenções realizadas, incluindo o técnico, descrição e data da manutenção.</p>
+            <code>
+                SELECT maintenance_logs.id AS log_id, 
+                       devices.name AS device_name, 
+                       users.name AS technician_name, 
+                       maintenance_logs.description, 
+                       maintenance_logs.maintenance_date
+                FROM maintenance_logs
+                INNER JOIN devices ON maintenance_logs.device_id = devices.id
+                LEFT JOIN users ON maintenance_logs.performed_by = users.id;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>maintenance_logs.device_id → devices.id</li>
+                    <li>maintenance_logs.performed_by → users.id (LEFT JOIN)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 6 -->
+        <div class="query-box">
+            <h2>Consulta 6: Resumo geral do sistema</h2>
+            <p>Fornece um resumo geral sobre o número de dispositivos, leituras de temperatura, alertas e manutenções.</p>
+            <code>
+                SELECT (SELECT COUNT(*) FROM devices) AS total_devices,
+                       (SELECT COUNT(*) FROM temperature_readings) AS total_readings,
+                       (SELECT COUNT(*) FROM alerts) AS total_alerts,
+                       (SELECT COUNT(*) FROM maintenance_logs) AS total_maintenances;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>Contagem das tabelas: devices, temperature_readings, alerts, maintenance_logs</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consulta 7 -->
+        <div class="query-box">
+            <h2>Consulta 7: Relatório detalhado por dispositivo</h2>
+            <p>Relatório completo com informações sobre dispositivos, últimas leituras e eventos recentes.</p>
+            <code>
+                SELECT devices.name AS device_name, 
+                       users.name AS user_name, 
+                       MAX(temperature_readings.recorded_at) AS last_temperature_reading, 
+                       COUNT(door_events.id) AS total_door_events, 
+                       COUNT(alerts.id) AS total_alerts
+                FROM devices
+                LEFT JOIN temperature_readings ON devices.id = temperature_readings.device_id
+                LEFT JOIN door_events ON devices.id = door_events.device_id
+                LEFT JOIN alerts ON devices.id = alerts.device_id
+                INNER JOIN users ON devices.user_id = users.id
+                GROUP BY devices.name, users.name;
+            </code>
+            <div class="relation">
+                <p><strong>Relações:</strong></p>
+                <ul>
+                    <li>temperature_readings.device_id → devices.id (LEFT JOIN)</li>
+                    <li>door_events.device_id → devices.id (LEFT JOIN)</li>
+                    <li>alerts.device_id → devices.id (LEFT JOIN)</li>
+                    <li>devices.user_id → users.id</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
